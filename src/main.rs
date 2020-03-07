@@ -17,18 +17,17 @@
 extern crate env_logger;
 
 use std::fs::File;
-use std::io::BufReader;
 use std::io::BufRead;
+use std::io::BufReader;
 use std::path::{Path, PathBuf};
 use std::process;
 use std::time::Duration;
 
 use ansi_term::Color;
 use app_dirs::AppInfo;
-use docopt::Docopt;
+use clap::Clap;
 #[cfg(not(target_os = "windows"))]
 use pager::Pager;
-use serde_derive::Deserialize;
 
 mod cache;
 mod config;
@@ -49,62 +48,60 @@ const APP_INFO: AppInfo = AppInfo {
     name: NAME,
     author: NAME,
 };
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-const USAGE: &str = "
-Usage:
-
-    tldr [options] <command>...
-    tldr [options]
-
-Options:
-
-    -h --help           Show this screen
-    -v --version        Show version information
-    -l --list           List all commands in the cache
-    -f --render <file>  Render a specific markdown file
-    -o --os <type>      Override the operating system [linux, osx, sunos, windows]
-    -u --update         Update the local cache
-    -c --clear-cache    Clear the local cache
-    -p --pager          Use a pager to page output
-    -m --markdown       Display the raw markdown instead of rendering it
-    -q --quiet          Suppress informational messages
-    --config-path       Show config file path
-    --seed-config       Create a basic config
-
-Examples:
-
-    $ tldr tar
-    $ tldr --list
-
-To control the cache:
-
-    $ tldr --update
-    $ tldr --clear-cache
-
-To render a local file (for testing):
-
-    $ tldr --render /path/to/file.md
-";
 const ARCHIVE_URL: &str = "https://github.com/tldr-pages/tldr/archive/master.tar.gz";
 const MAX_CACHE_AGE: Duration = Duration::from_secs(2_592_000); // 30 days
 #[cfg(not(target_os = "windows"))]
 const PAGER_COMMAND: &str = "less -R";
 
-#[derive(Debug, Deserialize)]
+#[derive(Clap, Debug)]
+#[clap(about = "A fast TLDR client", author, version)]
 struct Args {
-    arg_command: Option<Vec<String>>,
-    flag_help: bool,
-    flag_version: bool,
-    flag_list: bool,
-    flag_render: Option<String>,
-    flag_os: Option<OsType>,
-    flag_update: bool,
-    flag_clear_cache: bool,
-    flag_pager: bool,
-    flag_quiet: bool,
-    flag_config_path: bool,
-    flag_seed_config: bool,
-    flag_markdown: bool,
+    /// The command to show (e.g. `tar` or `git log`)
+    command: Vec<String>,
+
+    /// List all commands in the cache
+    #[clap(short = "l", long = "list")]
+    list: bool,
+
+    /// Render a specific markdown file
+    #[clap(short = "f", long = "render")]
+    render: Option<String>,
+
+    /// Override the operating system [linux, macos, sunos, windows]
+    #[clap(short = "o", long = "os")]
+    os: Option<OsType>,
+
+    /// Update the local cache
+    #[clap(short = "u", long = "update")]
+    update: bool,
+
+    /// Clear the local cache
+    #[clap(short = "c", long = "clear-cache")]
+    clear_cache: bool,
+
+    /// Use a pager to page output
+    #[clap(short = "p", long = "pager")]
+    pager: bool,
+
+    /// Suppress informational messages
+    #[clap(short = "q", long = "quiet")]
+    quiet: bool,
+
+    /// Display the raw markdown instead of rendering it
+    #[clap(short = "m", long = "markdown")]
+    markdown: bool,
+
+    /// Show config file path
+    #[clap(long = "config-path")]
+    config_path: bool,
+
+    /// Create a basic config
+    #[clap(long = "seed-config")]
+    seed_config: bool,
+
+    /// Prints the version
+    #[clap(short = "v", long = "version")]
+    version: bool,
 }
 
 /// Print page by path
@@ -144,7 +141,7 @@ fn print_page(path: &Path, enable_markdown: bool, enable_styles: bool) -> Result
 #[cfg(not(target_os = "windows"))]
 fn configure_pager(args: &Args, enable_styles: bool) {
     // Flags have precedence
-    if args.flag_pager {
+    if args.pager {
         Pager::with_default_pager(PAGER_COMMAND).setup();
         return;
     }
@@ -174,10 +171,10 @@ fn configure_pager(_args: &Args, _enable_styles: bool) {
 
 /// Check the cache for freshness
 fn check_cache(args: &Args) {
-    if !args.flag_update {
+    if !args.update {
         match Cache::last_update() {
             Some(ago) if ago > MAX_CACHE_AGE => {
-                if args.flag_quiet {
+                if args.quiet {
                     return;
                 }
                 println!(
@@ -279,11 +276,13 @@ fn get_os() -> OsType {
     OsType::Linux
 }
 
-#[cfg(any(target_os = "macos",
-          target_os = "freebsd",
-          target_os = "netbsd",
-          target_os = "openbsd",
-          target_os = "dragonfly"))]
+#[cfg(any(
+    target_os = "macos",
+    target_os = "freebsd",
+    target_os = "netbsd",
+    target_os = "openbsd",
+    target_os = "dragonfly"
+))]
 fn get_os() -> OsType {
     OsType::OsX
 }
@@ -293,13 +292,15 @@ fn get_os() -> OsType {
     OsType::Windows
 }
 
-#[cfg(not(any(target_os = "linux",
-              target_os = "macos",
-              target_os = "freebsd",
-              target_os = "netbsd",
-              target_os = "openbsd",
-              target_os = "dragonfly",
-              target_os = "windows")))]
+#[cfg(not(any(
+    target_os = "linux",
+    target_os = "macos",
+    target_os = "freebsd",
+    target_os = "netbsd",
+    target_os = "openbsd",
+    target_os = "dragonfly",
+    target_os = "windows"
+)))]
 fn get_os() -> OsType {
     OsType::Other
 }
@@ -309,16 +310,7 @@ fn main() {
     init_log();
 
     // Parse arguments
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.deserialize())
-        .unwrap_or_else(|e| e.exit());
-
-    // Show version and exit
-    if args.flag_version {
-        let os = get_os();
-        println!("{} v{} ({})", NAME, VERSION, os);
-        process::exit(0);
-    }
+    let args: Args = Args::parse();
 
     // Determine the usage of styles
     #[cfg(target_os = "windows")]
@@ -330,7 +322,7 @@ fn main() {
     configure_pager(&args, enable_styles);
 
     // Specify target OS
-    let os: OsType = match args.flag_os {
+    let os: OsType = match args.os {
         Some(os) => os,
         None => get_os(),
     };
@@ -339,29 +331,29 @@ fn main() {
     let cache = Cache::new(ARCHIVE_URL, os);
 
     // Clear cache, pass through
-    if args.flag_clear_cache {
-        clear_cache(args.flag_quiet);
+    if args.clear_cache {
+        clear_cache(args.quiet);
     }
 
     // Update cache, pass through
-    if args.flag_update {
-        update_cache(&cache, args.flag_quiet);
+    if args.update {
+        update_cache(&cache, args.quiet);
     }
 
     // Show config file and path, pass through
-    if args.flag_config_path {
+    if args.config_path {
         show_config_path();
     }
 
     // Create a basic config and exit
-    if args.flag_seed_config {
+    if args.seed_config {
         create_config_and_exit();
     }
 
     // Render local file and exit
-    if let Some(ref file) = args.flag_render {
+    if let Some(ref file) = args.render {
         let path = PathBuf::from(file);
-        if let Err(msg) = print_page(&path, args.flag_markdown, enable_styles) {
+        if let Err(msg) = print_page(&path, args.markdown, enable_styles) {
             eprintln!("{}", msg);
             process::exit(1);
         } else {
@@ -370,7 +362,7 @@ fn main() {
     }
 
     // List cached commands and exit
-    if args.flag_list {
+    if args.list {
         // Check cache for freshness
         check_cache(&args);
 
@@ -390,55 +382,27 @@ fn main() {
     }
 
     // Show command from cache
-    if let Some(ref command) = args.arg_command {
-        let command = command.join("-");
+    if !args.command.is_empty() {
+        let command = args.command.join("-");
+
         // Check cache for freshness
         check_cache(&args);
 
         // Search for command in cache
         if let Some(path) = cache.find_page(&command) {
-            if let Err(msg) = print_page(&path, args.flag_markdown, enable_styles) {
+            if let Err(msg) = print_page(&path, args.markdown, enable_styles) {
                 eprintln!("{}", msg);
                 process::exit(1);
             } else {
                 process::exit(0);
             }
         } else {
-            if !args.flag_quiet {
+            if !args.quiet {
                 println!("Page {} not found in cache", &command);
                 println!("Try updating with `tldr --update`, or submit a pull request to:");
                 println!("https://github.com/tldr-pages/tldr");
             }
             process::exit(1);
         }
-    }
-
-    // Some flags can be run without a command.
-    if !(args.flag_update || args.flag_clear_cache || args.flag_config_path) {
-        eprintln!("{}", USAGE);
-        process::exit(1);
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use docopt::{Docopt, Error};
-    use crate::{Args, OsType, USAGE};
-
-    fn test_helper(argv: &[&str]) -> Result<Args, Error> {
-        Docopt::new(USAGE).and_then(|d| d.argv(argv.iter()).deserialize())
-    }
-
-    #[test]
-    fn test_docopt_os_case_insensitive() {
-        let argv = vec!["cp", "--os", "LiNuX"];
-        let os = test_helper(&argv).unwrap().flag_os.unwrap();
-        assert_eq!(OsType::Linux, os);
-    }
-
-    #[test]
-    fn test_docopt_expect_error() {
-        let argv = vec!["cp", "--os", "lindows"];
-        assert!(!test_helper(&argv).is_ok());
     }
 }

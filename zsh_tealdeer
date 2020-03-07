@@ -14,9 +14,10 @@ _tealdeer() {
 	"($I -f --render)"{-f,--render}"[Render a specific markdown file]:file:_files"
 	"($I -o --os)"{-o,--os}'[Override the operating system]:os:((
              linux
+             macos
              osx
-       	     sunos
-	     windows
+             sunos
+             windows
         ))'
 	"($I -u --update)"{-u,--update}"[Update the local cache]"
 	"($I -c --clear-cache)"{-c,--clear-cache}"[Clear the local cache]"
