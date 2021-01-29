@@ -1,3 +1,5 @@
+use std::mem;
+
 /// An extension trait to clear duplicates from a collection.
 pub(crate) trait Dedup<T: PartialEq + Clone> {
     fn clear_duplicates(&mut self);
@@ -9,14 +11,11 @@ pub(crate) trait Dedup<T: PartialEq + Clone> {
 /// Based on <https://stackoverflow.com/a/57889826/284318>
 impl<T: PartialEq + Clone> Dedup<T> for Vec<T> {
     fn clear_duplicates(&mut self) {
-        let mut already_seen = Vec::with_capacity(self.len());
-        self.retain(|item| {
-            if already_seen.contains(item) {
-                false
-            } else {
-                already_seen.push(item.clone());
-                true
+        let orig = mem::replace(self, Vec::with_capacity(self.len()));
+        for item in orig {
+            if !self.contains(&item) {
+                self.push(item);
             }
-        })
+        }
     }
 }
