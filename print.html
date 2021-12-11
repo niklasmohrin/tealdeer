@@ -178,22 +178,21 @@ in Rust: Simplified, example based and community-driven man pages.</p>
 <h1><a class="header" href="#installing" id="installing">Installing</a></h1>
 <p>There are a few different ways to install Tealdeer:</p>
 <ul>
-<li>Through <a href="installing.html#packet-managers">packet managers</a></li>
+<li>Through <a href="installing.html#package-managers">package managers</a></li>
 <li>Through <a href="installing.html#static-binaries-linux">static binaries</a></li>
 <li>Through <a href="installing.html#through-cargo-install">cargo install</a></li>
 <li>By <a href="installing.html#build-from-source">building from source</a></li>
 </ul>
 <p>Additionally, when not using system packages, you can <a href="installing.html#autocompletion">manually install
 autocompletions</a>.</p>
-<h2><a class="header" href="#packet-managers" id="packet-managers">Packet Managers</a></h2>
+<h2><a class="header" href="#package-managers" id="package-managers">Package Managers</a></h2>
 <p>Tealdeer has been added to a few package managers:</p>
 <ul>
-<li>Arch Linux AUR: <a href="https://aur.archlinux.org/packages/tealdeer/"><code>tealdeer</code></a>,
-<a href="https://aur.archlinux.org/packages/tealdeer-bin/"><code>tealdeer-bin</code></a> or
-<a href="https://aur.archlinux.org/packages/tealdeer-git/"><code>tealdeer-git</code></a></li>
+<li>Arch Linux: <a href="https://archlinux.org/packages/community/x86_64/tealdeer/"><code>tealdeer</code></a></li>
 <li>Fedora: <a href="https://src.fedoraproject.org/rpms/rust-tealdeer"><code>tealdeer</code></a></li>
 <li>FreeBSD: <a href="https://www.freshports.org/sysutils/tealdeer/"><code>sysutils/tealdeer</code></a></li>
-<li>macOS Homebrew: <a href="https://formulae.brew.sh/formula/tealdeer"><code>tealdeer</code></a></li>
+<li>Funtoo: <a href="https://github.com/funtoo/core-kit/tree/1.4-release/app-misc/tealdeer"><code>app-misc/tealdeer</code></a></li>
+<li>Homebrew: <a href="https://formulae.brew.sh/formula/tealdeer"><code>tealdeer</code></a></li>
 <li>NetBSD: <a href="https://pkgsrc.se/sysutils/tealdeer"><code>sysutils/tealdeer</code></a></li>
 <li>Nix: <a href="https://nixos.org/nixos/packages.html#tealdeer"><code>tealdeer</code></a></li>
 <li>openSUSE: <a href="https://software.opensuse.org/package/tealdeer?search_term=tealdeer"><code>tealdeer</code></a></li>
@@ -230,42 +229,39 @@ package is called <code>libssl-dev</code> on Ubuntu.)</em></p>
 <h1><a class="header" href="#usage" id="usage">Usage</a></h1>
 <p>Tealdeer is straightforward to use, through the binary named <code>tldr</code>.</p>
 <p>You can view the available options using <code>tldr --help</code>:</p>
-<pre><code>Usage:
+<!-- Note: To update the file below, run `cargo run -- --help > docs/src/usage.txt`. -->
+<pre><code>tealdeer 1.4.1
 
-    tldr [options] &lt;command&gt;...
-    tldr [options]
+Danilo Bargen &lt;mail@dbrgn.ch&gt;, Niklas Mohrin &lt;dev@niklasmohrin.de&gt;
 
-Options:
+A fast TLDR client
 
-    -h --help             Show this screen
-    -v --version          Show version information
-    -l --list             List all commands in the cache
-    -f --render &lt;file&gt;    Render a specific markdown file
-    -o --os &lt;type&gt;        Override the operating system [linux, osx, sunos, windows]
-    -L --language &lt;lang&gt;  Override the language settings
-    -u --update           Update the local cache
-    -c --clear-cache      Clear the local cache
-    -p --pager            Use a pager to page output
-    -m --markdown         Display the raw markdown instead of rendering it
-    -q --quiet            Suppress informational messages
-    --show-paths          Show file and directory paths used by tealdeer
-    --config-path         Show config file path (deprecated)
-    --seed-config         Create a basic config
-    --color &lt;when&gt;        Control when to use color [always, auto, never] [default: auto]
+USAGE:
+    tldr [OPTIONS] [COMMAND]...
 
-Examples:
+ARGS:
+    &lt;COMMAND&gt;...    The command to show (e.g. `tar` or `git log`)
 
-    $ tldr tar
-    $ tldr --list
+OPTIONS:
+    -l, --list                   List all commands in the cache
+    -f, --render &lt;FILE&gt;          Render a specific markdown file
+    -p, --platform &lt;PLATFORM&gt;    Override the operating system [possible values: linux, macos,
+                                 windows, sunos, osx]
+    -o, --os &lt;OS&gt;                Deprecated alias of `platform`
+    -L, --language &lt;LANGUAGE&gt;    Override the language
+    -u, --update                 Update the local cache
+    -c, --clear-cache            Clear the local cache
+        --pager                  Use a pager to page output
+    -r, --raw                    Display the raw markdown instead of rendering it
+    -q, --quiet                  Suppress informational messages
+        --show-paths             Show file and directory paths used by tealdeer
+        --config-path            Show config file path
+        --seed-config            Create a basic config
+        --color &lt;WHEN&gt;           Control whether to use color [possible values: always, auto, never]
+    -v, --version                Print the version
+    -h, --help                   Print help information
 
-To control the cache:
-
-    $ tldr --update
-    $ tldr --clear-cache
-
-To render a local file (for testing):
-
-    $ tldr --render /path/to/file.md
+To view the user documentation, please visit https://dbrgn.github.io/tealdeer/.
 </code></pre>
 <h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
 <p>Tealdeer can be customized with a config file called <code>config.toml</code>.  Creating
@@ -341,6 +337,7 @@ compact = true
 <li><code>background</code> (color string, ANSI code, or RGB, see below)</li>
 <li><code>underline</code> (<code>true</code> or <code>false</code>)</li>
 <li><code>bold</code> (<code>true</code> or <code>false</code>)</li>
+<li><code>italic</code> (<code>true</code> or <code>false</code>)</li>
 </ul>
 <p>Colors can be specified in one of three ways:</p>
 <ul>
