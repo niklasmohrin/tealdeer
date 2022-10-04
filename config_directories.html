@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Installing - Tealdeer User Manual</title>
+        <title>Section: [directories] - Tealdeer User Manual</title>
         
         
 
@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded "><a href="installing.html" class="active"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage_custom_pages.html"><strong aria-hidden="true">2.1.</strong> Custom Pages and Patches</a></li></ol></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config_display.html"><strong aria-hidden="true">3.1.</strong> Section: [display]</a></li><li class="chapter-item expanded "><a href="config_style.html"><strong aria-hidden="true">3.2.</strong> Section: [style]</a></li><li class="chapter-item expanded "><a href="config_updates.html"><strong aria-hidden="true">3.3.</strong> Section: [updates]</a></li><li class="chapter-item expanded "><a href="config_directories.html"><strong aria-hidden="true">3.4.</strong> Section: [directories]</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage_custom_pages.html"><strong aria-hidden="true">2.1.</strong> Custom Pages and Patches</a></li></ol></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config_display.html"><strong aria-hidden="true">3.1.</strong> Section: [display]</a></li><li class="chapter-item expanded "><a href="config_style.html"><strong aria-hidden="true">3.2.</strong> Section: [style]</a></li><li class="chapter-item expanded "><a href="config_updates.html"><strong aria-hidden="true">3.3.</strong> Section: [updates]</a></li><li class="chapter-item expanded "><a href="config_directories.html" class="active"><strong aria-hidden="true">3.4.</strong> Section: [directories]</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -163,75 +163,36 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1><a class="header" href="#installing" id="installing">Installing</a></h1>
-<p>There are a few different ways to install Tealdeer:</p>
-<ul>
-<li>Through <a href="#package-managers">package managers</a></li>
-<li>Through <a href="#static-binaries-linux">static binaries</a></li>
-<li>Through <a href="#through-cargo-install">cargo install</a></li>
-<li>By <a href="#build-from-source">building from source</a></li>
-</ul>
-<p>Additionally, when not using system packages, you can <a href="#autocompletion">manually install
-autocompletions</a>.</p>
-<h2><a class="header" href="#package-managers" id="package-managers">Package Managers</a></h2>
-<p>Tealdeer has been added to a few package managers:</p>
-<ul>
-<li>Arch Linux: <a href="https://archlinux.org/packages/community/x86_64/tealdeer/"><code>tealdeer</code></a></li>
-<li>Fedora: <a href="https://src.fedoraproject.org/rpms/rust-tealdeer"><code>tealdeer</code></a></li>
-<li>FreeBSD: <a href="https://www.freshports.org/sysutils/tealdeer/"><code>sysutils/tealdeer</code></a></li>
-<li>Funtoo: <a href="https://github.com/funtoo/core-kit/tree/1.4-release/app-misc/tealdeer"><code>app-misc/tealdeer</code></a></li>
-<li>Homebrew: <a href="https://formulae.brew.sh/formula/tealdeer"><code>tealdeer</code></a></li>
-<li>MacPorts: <a href="https://ports.macports.org/port/tealdeer/"><code>tealdeer</code></a></li>
-<li>NetBSD: <a href="https://pkgsrc.se/sysutils/tealdeer"><code>sysutils/tealdeer</code></a></li>
-<li>Nix: <a href="https://nixos.org/nixos/packages.html#tealdeer"><code>tealdeer</code></a></li>
-<li>openSUSE: <a href="https://software.opensuse.org/package/tealdeer?search_term=tealdeer"><code>tealdeer</code></a></li>
-<li>Solus: <a href="https://packages.getsol.us/shannon/t/tealdeer/"><code>tealdeer</code></a></li>
-<li>Void Linux: <a href="https://github.com/void-linux/void-packages/tree/master/srcpkgs/tealdeer"><code>tealdeer</code></a></li>
-</ul>
-<h2><a class="header" href="#static-binaries-linux" id="static-binaries-linux">Static Binaries (Linux)</a></h2>
-<p>Static binary builds (currently for Linux only) are available on the
-<a href="https://github.com/dbrgn/tealdeer/releases">GitHub releases page</a>.
-Simply download the binary for your platform and run it!</p>
-<h2><a class="header" href="#through-cargo-install" id="through-cargo-install">Through <code>cargo install</code></a></h2>
-<p>Build and install the tool via cargo...</p>
-<pre><code>$ cargo install tealdeer
+                        <h1><a class="header" href="#section-directories" id="section-directories">Section: [directories]</a></h1>
+<p>This section allows overriding some directory paths.</p>
+<h2><a class="header" href="#cache_dir" id="cache_dir"><code>cache_dir</code></a></h2>
+<p>Override the cache directory. Remember to use an absolute path. Variable
+expansion will not be performed on the path. If the directory does not yet
+exist, it will be created.</p>
+<pre><code>[directories]
+cache_dir = &quot;/home/myuser/.tealdeer-cache/&quot;
 </code></pre>
-<p><em>(Note: You might need to install OpenSSL development headers, otherwise you get
-a &quot;failed to run custom build command for openssl-sys&quot; error message. The
-package is called <code>libssl-dev</code> on Ubuntu.)</em></p>
-<h2><a class="header" href="#build-from-source" id="build-from-source">Build From Source</a></h2>
-<p>Debug build with logging enabled:</p>
-<pre><code>$ cargo build --features logging
+<p>If no <code>cache_dir</code> is specified, tealdeer will fall back to a location that
+follows OS conventions. On Linux, it will usually be at <code>~/.cache/tealdeer/</code>.
+Use <code>tldr --show-paths</code> to show the path that is being used.</p>
+<h2><a class="header" href="#custom_pages_dir" id="custom_pages_dir"><code>custom_pages_dir</code></a></h2>
+<p>Set the directory to be used to look up <a href="usage_custom_pages.html">custom
+pages</a>. Remember to use an absolute path. Variable
+expansion will not be performed on the path.</p>
+<pre><code>[directories]
+custom_pages_dir = &quot;/home/myuser/custom-tldr-pages/&quot;
 </code></pre>
-<p>Release build without logging:</p>
-<pre><code>$ cargo build --release
-</code></pre>
-<p>To enable the log output, set the <code>RUST_LOG</code> env variable:</p>
-<pre><code>$ export RUST_LOG=tldr=debug
-</code></pre>
-<h2><a class="header" href="#autocompletion" id="autocompletion">Autocompletion</a></h2>
-<p>Shell completion scripts are located in the folder <code>completion</code>. 
-Just copy them to their designated location:</p>
-<ul>
-<li><em>Bash</em>: <code>cp completion/bash_tealdeer /usr/share/bash-completion/completions/tldr</code></li>
-<li><em>Fish</em>: <code>cp completion/fish_tealdeer ~/.config/fish/completions/tldr.fish</code></li>
-<li><em>Zsh</em>: <code>cp completion/zsh_tealdeer /usr/share/zsh/site-functions/_tldr</code></li>
-</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="intro.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="config_updates.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
-                        
-                            <a rel="next" href="usage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -241,15 +202,11 @@ Just copy them to their designated location:</p>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a rel="prev" href="intro.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="config_updates.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
-                
-                    <a rel="next" href="usage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
-                        <i class="fa fa-angle-right"></i>
-                    </a>
                 
             </nav>
 

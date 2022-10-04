@@ -95,7 +95,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="usage.html" class="active"><strong aria-hidden="true">2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config_display.html"><strong aria-hidden="true">3.1.</strong> display</a></li><li class="chapter-item expanded "><a href="config_style.html"><strong aria-hidden="true">3.2.</strong> style</a></li><li class="chapter-item expanded "><a href="config_updates.html"><strong aria-hidden="true">3.3.</strong> updates</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="intro.html">Introduction</a></li><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="usage.html" class="active"><strong aria-hidden="true">2.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="usage_custom_pages.html"><strong aria-hidden="true">2.1.</strong> Custom Pages and Patches</a></li></ol></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="config_display.html"><strong aria-hidden="true">3.1.</strong> Section: [display]</a></li><li class="chapter-item expanded "><a href="config_style.html"><strong aria-hidden="true">3.2.</strong> Section: [style]</a></li><li class="chapter-item expanded "><a href="config_updates.html"><strong aria-hidden="true">3.3.</strong> Section: [updates]</a></li><li class="chapter-item expanded "><a href="config_directories.html"><strong aria-hidden="true">3.4.</strong> Section: [directories]</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -167,10 +167,8 @@
 <p>Tealdeer is straightforward to use, through the binary named <code>tldr</code>.</p>
 <p>You can view the available options using <code>tldr --help</code>:</p>
 <!-- Note: To update the file below, run `cargo run -- --help > docs/src/usage.txt`. -->
-<pre><code>tealdeer 1.4.1
-
+<pre><code>tealdeer 1.6.0
 Danilo Bargen &lt;mail@dbrgn.ch&gt;, Niklas Mohrin &lt;dev@niklasmohrin.de&gt;
-
 A fast TLDR client
 
 USAGE:
@@ -183,16 +181,15 @@ OPTIONS:
     -l, --list                   List all commands in the cache
     -f, --render &lt;FILE&gt;          Render a specific markdown file
     -p, --platform &lt;PLATFORM&gt;    Override the operating system [possible values: linux, macos,
-                                 windows, sunos, osx]
-    -o, --os &lt;OS&gt;                Deprecated alias of `platform`
+                                 windows, sunos, osx, android]
     -L, --language &lt;LANGUAGE&gt;    Override the language
     -u, --update                 Update the local cache
+        --no-auto-update         If auto update is configured, disable it for this run
     -c, --clear-cache            Clear the local cache
         --pager                  Use a pager to page output
     -r, --raw                    Display the raw markdown instead of rendering it
     -q, --quiet                  Suppress informational messages
         --show-paths             Show file and directory paths used by tealdeer
-        --config-path            Show config file path
         --seed-config            Create a basic config
         --color &lt;WHEN&gt;           Control whether to use color [possible values: always, auto, never]
     -v, --version                Print the version
@@ -212,7 +209,7 @@ To view the user documentation, please visit https://dbrgn.github.io/tealdeer/.
                         
 
                         
-                            <a rel="next" href="config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="usage_custom_pages.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -230,7 +227,7 @@ To view the user documentation, please visit https://dbrgn.github.io/tealdeer/.
                 
 
                 
-                    <a rel="next" href="config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="usage_custom_pages.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
