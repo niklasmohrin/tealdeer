@@ -69,12 +69,14 @@ const ARCHIVE_URL: &str = "https://tldr.sh/assets/tldr.zip";
 /// The cache should be updated if it was explicitly requested,
 /// or if an automatic update is due and allowed.
 fn should_update_cache(cache: &Cache, args: &Cli, config: &Config) -> bool {
-    args.update
-        || (!args.no_auto_update
-            && config.updates.auto_update
-            && cache
-                .last_update()
-                .map_or(true, |ago| ago >= config.updates.auto_update_interval))
+    if args.update {
+        return true;
+    }
+    if args.no_auto_update || !config.updates.auto_update {
+        return false;
+    }
+
+    return matches!(cache.age(), Ok(age) if age >= config.updates.auto_update_interval);
 }
 
 #[derive(PartialEq)]
@@ -84,43 +86,43 @@ enum CheckCacheResult {
 }
 
 /// Check the cache for freshness. If it's stale or missing, show a warning.
-fn check_cache(cache: &Cache, args: &Cli, enable_styles: bool) -> CheckCacheResult {
-    match cache.freshness() {
-        CacheFreshness::Fresh => CheckCacheResult::CacheFound,
-        CacheFreshness::Stale(_) if args.quiet => CheckCacheResult::CacheFound,
-        CacheFreshness::Stale(age) => {
-            print_warning(
-                enable_styles,
-                &format!(
-                    "The cache hasn't been updated for {} days.\n\
-                     You should probably run `tldr --update` soon.",
-                    age.as_secs() / 24 / 3600
-                ),
-            );
-            CheckCacheResult::CacheFound
-        }
-        CacheFreshness::Missing => {
-            print_error(
-                enable_styles,
-                &anyhow::anyhow!(
-                    "Page cache not found. Please run `tldr --update` to download the cache."
-                ),
-            );
-            println!("\nNote: You can optionally enable automatic cache updates by adding the");
-            println!("following config to your config file:\n");
-            println!("  [updates]");
-            println!("  auto_update = true\n");
-            println!("The path to your config file can be looked up with `tldr --show-paths`.");
-            println!("To create an initial config file, use `tldr --seed-config`.\n");
-            println!("You can find more tips and tricks in our docs:\n");
-            println!("  https://tealdeer-rs.github.io/tealdeer/config_updates.html");
-            CheckCacheResult::CacheMissing
-        }
-    }
-}
+// fn check_cache(cache: &Cache, args: &Cli, enable_styles: bool) -> CheckCacheResult {
+//     match cache.freshness() {
+//         CacheFreshness::Fresh => CheckCacheResult::CacheFound,
+//         CacheFreshness::Stale(_) if args.quiet => CheckCacheResult::CacheFound,
+//         CacheFreshness::Stale(age) => {
+//             print_warning(
+//                 enable_styles,
+//                 &format!(
+//                     "The cache hasn't been updated for {} days.\n\
+//                      You should probably run `tldr --update` soon.",
+//                     age.as_secs() / 24 / 3600
+//                 ),
+//             );
+//             CheckCacheResult::CacheFound
+//         }
+//         CacheFreshness::Missing => {
+//             print_error(
+//                 enable_styles,
+//                 &anyhow::anyhow!(
+//                     "Page cache not found. Please run `tldr --update` to download the cache."
+//                 ),
+//             );
+//             println!("\nNote: You can optionally enable automatic cache updates by adding the");
+//             println!("following config to your config file:\n");
+//             println!("  [updates]");
+//             println!("  auto_update = true\n");
+//             println!("The path to your config file can be looked up with `tldr --show-paths`.");
+//             println!("To create an initial config file, use `tldr --seed-config`.\n");
+//             println!("You can find more tips and tricks in our docs:\n");
+//             println!("  https://tealdeer-rs.github.io/tealdeer/config_updates.html");
+//             CheckCacheResult::CacheMissing
+//         }
+//     }
+// }
 
 /// Clear the cache
-fn clear_cache(cache: &Cache, quietly: bool, enable_styles: bool) {
+fn clear_cache(cache: Cache, quietly: bool, enable_styles: bool) {
     let cache_dir_found = cache.clear().unwrap_or_else(|e| {
         print_error(enable_styles, &e.context("Could not clear cache"));
         process::exit(1);
