@@ -1,4 +1,4 @@
-use std::mem;
+use std::{mem, ops::Deref, path::PathBuf};
 
 /// An extension trait to clear duplicates from a collection.
 pub(crate) trait Dedup<T: PartialEq> {
@@ -29,5 +29,46 @@ impl FindFrom for str {
         self.get(start..)
             .and_then(|s| s.find(needle))
             .map(|i| i + start)
+    }
+}
+
+/// Add the `with` method to `PathBuf` which can be used to temporarily push components and
+/// automatically pop them at the end of the scope.
+pub(crate) trait PathBufExt {
+    fn with<'a, const N: usize>(&'a mut self, components: [&str; N]) -> PathBufWith<'a, N>;
+}
+
+impl PathBufExt for PathBuf {
+    fn with<'a, const N: usize>(&'a mut self, components: [&str; N]) -> PathBufWith<'a, N> {
+        for comp in components {
+            self.push(comp);
+        }
+        PathBufWith { buf: self }
+    }
+}
+
+pub(crate) struct PathBufWith<'a, const N: usize> {
+    buf: &'a mut PathBuf,
+}
+
+impl<const N: usize> Drop for PathBufWith<'_, N> {
+    fn drop(&mut self) {
+        for _ in 0..N {
+            self.buf.pop();
+        }
+    }
+}
+
+impl<const N: usize> PathBufWith<'_, N> {
+    pub fn take(self) -> PathBuf {
+        mem::take(self.buf)
+    }
+}
+
+impl<const N: usize> Deref for PathBufWith<'_, N> {
+    type Target = PathBuf;
+
+    fn deref(&self) -> &Self::Target {
+        self.buf
     }
 }

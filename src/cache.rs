@@ -14,7 +14,7 @@ use ureq::{
 };
 use zip::ZipArchive;
 
-use crate::{config::TlsBackend, types::PlatformType};
+use crate::{config::TlsBackend, extensions::PathBufExt, types::PlatformType};
 
 pub static TLDR_PAGES_DIR: &str = "tldr-pages";
 pub static TLDR_OLD_PAGES_DIR: &str = "tldr-master";
@@ -112,19 +112,18 @@ impl<'a> Cache<'a> {
         let mut search_path = self.config.pages_directory.to_path_buf();
         for &platform in self.config.platforms {
             for language in self.config.languages {
-                search_path.push(language.directory_name());
-                search_path.push(platform.directory_name());
-                search_path.push(&page_filename);
+                let page_path = search_path.with([
+                    &language.directory_name(),
+                    platform.directory_name(),
+                    &page_filename,
+                ]);
 
-                if search_path.is_file() {
+                if page_path.is_file() {
                     return Some(
-                        PageLookupResult::with_page(search_path).with_optional_patch(patch_path),
+                        PageLookupResult::with_page(page_path.take())
+                            .with_optional_patch(patch_path),
                     );
                 }
-
-                search_path.pop();
-                search_path.pop();
-                search_path.pop();
             }
         }
 
