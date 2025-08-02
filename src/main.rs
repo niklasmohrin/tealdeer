@@ -250,7 +250,7 @@ fn try_main(args: Cli, enable_styles: bool) -> Result<ExitCode> {
     }
 
     let platforms = compute_platforms(args.platforms.as_ref());
-    let languages = match args.language.as_deref() {
+    let search_languages = match args.language.as_deref() {
         Some(lang) => &[Language(lang)] as &[_],
         None => &config.search.languages,
     };
@@ -263,7 +263,8 @@ fn try_main(args: Cli, enable_styles: bool) -> Result<ExitCode> {
             .as_ref()
             .map(PathWithSource::path),
         platforms: &platforms,
-        languages,
+        search_languages,
+        download_languages: &config.updates.download_languages,
     };
 
     // TODO: remove in tealdeer 1.9

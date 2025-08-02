@@ -27,7 +27,8 @@ pub struct CacheConfig<'a> {
     pub pages_directory: &'a Path,
     pub custom_pages_directory: Option<&'a Path>,
     pub platforms: &'a [PlatformType],
-    pub languages: &'a [Language<'a>],
+    pub search_languages: &'a [Language<'a>],
+    pub download_languages: &'a [Language<'a>],
 }
 
 /// The directory backing this cache is checked to be populated at construction.
@@ -110,7 +111,7 @@ impl<'a> Cache<'a> {
             .filter(|path| path.is_file());
 
         for &platform in self.config.platforms {
-            for language in self.config.languages {
+            for language in self.config.search_languages {
                 let mut search_path = self.config.pages_directory.to_path_buf();
                 search_path.push(language.directory_name());
                 search_path.push(platform.directory_name());
@@ -159,7 +160,7 @@ impl<'a> Cache<'a> {
         };
 
         let mut search_path = self.config.pages_directory.to_path_buf();
-        for language in self.config.languages {
+        for language in self.config.search_languages {
             search_path.push(language.directory_name());
             for platform in self.config.platforms {
                 search_path.push(platform.directory_name());
@@ -212,7 +213,7 @@ impl<'a> Cache<'a> {
         // Download everything before deleting anything
         let archives = self
             .config
-            .languages
+            .download_languages
             .iter()
             .map(|lang| {
                 Ok((
